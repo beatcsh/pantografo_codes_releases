@@ -1,0 +1,19 @@
+version: "3.9"
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
+
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+
+  csharp_api:
+      build: ./YMConnectApi
+      ports:
+        - "5229:5229"
+      environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+      restart: unless-stopped
