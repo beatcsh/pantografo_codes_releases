@@ -111,12 +111,12 @@ const Converter = (props) => {
       const url = window.URL.createObjectURL(blob);
       setDownloadUrl(url);
       setTimeout(() => {
-        if (window.confirm('¿Quieres enviar el archivo JBI al robot por FTP?')) {
+        if (window.confirm('¿Do you want to send the JBI to the robot?')) {
           enviarPorFTP(file.name.replace(/\.[^.]+$/, '.JBI'));
         }
       }, 100);
     } catch (err) {
-      setConvertError('Error al convertir el archivo.');
+      setConvertError('Conversion error.');
     }
     setConvertLoading(false);
   };
@@ -130,12 +130,12 @@ const Converter = (props) => {
         }
       });
       if (res.status === 200) {
-        alert('Archivo enviado exitosamente al robot.');
+        alert('File sent.');
       } else {
-        alert('Error al enviar el archivo por FTP.');
+        alert('An error occurred.');
       }
     } catch {
-      alert('Error de red al enviar por FTP.');
+      alert('An error ocurred.');
     }
   };
 
