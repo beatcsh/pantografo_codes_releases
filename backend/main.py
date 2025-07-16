@@ -6,6 +6,7 @@ from utils.ftp_manager import GestorFTP
 from utils.alarms import generate_graphs
 import pandas as pd
 import os
+import re
  
 """
     .
@@ -104,13 +105,16 @@ async def eliminar_job(idx = 0, FTP_HOST = ""):
 @app.get("/enviar-ftp")
 def enviar_ftp(filename: str = "", FTP_HOST = ""):  # No async para evitar problemas con ftplib
     try:
+        nombre, extension = os.path.splitext(filename)                   # Separar nombre y extensión
+        nombre_limpio = re.sub(r'[^a-zA-Z0-9]', '', nombre)                 # Limpiar: quitar todo lo que no sea letras o números
+        nombre_limpio = nombre_limpio[:9]                                   # Recortar a máximo 6 caracteres
+        nuevo_nombre = f"{nombre_limpio}{extension}"
         # Busca el archivo en la carpeta de uploads
-        jbi_path = os.path.join(UPLOAD_DIR, filename)
+        jbi_path = os.path.join(UPLOAD_DIR, nuevo_nombre)
         if not os.path.exists(jbi_path):
             return JSONResponse(content={"error": "Archivo no encontrado"}, status_code=404)
-        gestor = GestorFTP()
+        
         gestor.subir_archivo(jbi_path, FTP_HOST)
-        gestor.cerrar_conexion()
         return JSONResponse(content={"ok": True}, status_code=200)
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500) 

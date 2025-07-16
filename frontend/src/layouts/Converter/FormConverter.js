@@ -85,19 +85,19 @@ const FormConverter = ({ setView, tabla, setFile, file, form, handleRowSelect, h
                         <input className="converter-form-input" name="Plasma" value={form['Plasma']} onChange={handleFormChange} />
                     </div> */}
                     <div className="converter-form-field-group">
-                        <label className="converter-form-label">Kerf</label>
+                        <label className="converter-form-label">KERF</label>
                         <input className="converter-form-input" name="Kerf" value={form['Kerf']} onChange={handleFormChange} />
                     </div>
                     <div className="converter-form-field-group">
-                        <label className="converter-form-label">N° Pasadas</label>
+                        <label className="converter-form-label">PASSES</label>
                         <input className="converter-form-input" name="Pasadas" value={form['Pasadas']} onChange={handleFormChange} />
                     </div>
                     <div className="converter-form-field-group">
-                        <label className="converter-form-label">Profundidad Corte</label>
+                        <label className="converter-form-label">DEPTH CUT</label>
                         <input className="converter-form-input" name="Profundidad de Corte" value={form['Profundidad de Corte']} onChange={handleFormChange} />
                     </div>
                     <div className="converter-form-field-group">
-                        <label className="converter-form-label">Tipo de herramienta</label>
+                        <label className="converter-form-label">TYPE TOOL</label>
                         <select
                             name='Uso'
                             className="converter-form-input"
@@ -105,7 +105,7 @@ const FormConverter = ({ setView, tabla, setFile, file, form, handleRowSelect, h
                             onChange={handleFormChange}
                         >
                             <option value="0">Plasma</option>
-                            <option value="1">Demel</option>
+                            <option value="1">Dremel</option>
                         </select>
                     </div>
                 </form>
