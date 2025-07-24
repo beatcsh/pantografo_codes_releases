@@ -1,51 +1,51 @@
 Material,Current (A),Thickness (mm),Cutting speed (mm/s),Thickness (in),Cutting speed (in/s)
-Carbon steel,30,0.5,89,0.018,4
-Carbon steel,30,3.0,19,0.135,1
-Carbon steel,30,6.0,11,6.35,0
-Carbon steel,80,3.0,102,0.135,3
-Carbon steel,80,6.0,51,6.35,2
-Carbon steel,80,20.0,9,19.05,0
-Carbon steel,130,6.0,67,6.35,3
-Carbon steel,130,10.0,45,9.525,2
-Carbon steel,130,25.0,9,25.4,0
-Carbon steel,200,6.0,87,6.35,3
-Carbon steel,200,12.0,51,12.7,2
-Carbon steel,200,25.0,28,25.4,1
-Carbon steel,200,50.0,4,50.8,0
-Carbon steel,260,10.0,74,9.525,3
-Carbon steel,260,20.0,36,19.05,2
-Carbon steel,260,64.0,3,63.5,0
-Carbon steel,400,12.0,74,12.7,3
-Carbon steel,400,25.0,35,25.4,1
-Carbon steel,400,50.0,13,50.8,1
-Stainless steel,60,3.0,46,2.667,2
-Stainless steel,60,4.0,38,3.429,2
-Stainless steel,60,5.0,33,4.763,1
-Stainless steel,60,6.0,27,6.35,1
-Stainless steel,130,10.0,16,9.525,1
-Stainless steel,130,12.0,14,12.7,1
-Stainless steel,130,25.0,8,25.4,0
-Stainless steel,260,12.0,29,12.7,1
-Stainless steel,260,20.0,18,19.05,1
-Stainless steel,260,25.0,13,25.4,1
-Stainless steel,260,50.0,9,50.8,0
-Stainless steel,400,20.0,30,9.525,1
-Stainless steel,400,40.0,12,38.1,1
-Stainless steel,400,80.0,3,76.2,0
-Stainless steel,800,75.0,8,76.2,0
-Stainless steel,800,125.0,3,127.0,0
-Stainless steel,800,160.0,2,158.75,0
-Aluminum,45,1.5,74,0.048,4
-Aluminum,45,4.0,43,0.135,2
-Aluminum,6,1690.0,0,60.0,0
-Aluminum,130,12.0,24,0.5,1
-Aluminum,130,20.0,19,0.75,1
-Aluminum,130,25.0,9,1.0,0
-Aluminum,260,12.0,86,0.5,3
-Aluminum,260,20.0,37,0.75,2
-Aluminum,260,25.0,17,1.0,1
-Aluminum,400,20.0,40,0.75,2
-Aluminum,400,40.0,21,1.5,1
-Aluminum,400,75.0,4,3.0,0
-Aluminum,800,75.0,15,3.0,1
-Aluminum,800,160.0,3,6.25,0
+Carbon steel 30,0.5,89,0.018,4
+Carbon steel 30,3.0,19,0.135,1
+Carbon steel 30,6.0,11,6.35,0
+Carbon steel 80,3.0,102,0.135,3
+Carbon steel 80,6.0,51,6.35,2
+Carbon steel 80,20.0,9,19.05,0
+Carbon steel 130,6.0,67,6.35,3
+Carbon steel 130,10.0,45,9.525,2
+Carbon steel 130,25.0,9,25.4,0
+Carbon steel 200,6.0,87,6.35,3
+Carbon steel 200,12.0,51,12.7,2
+Carbon steel 200,25.0,28,25.4,1
+Carbon steel 200,50.0,4,50.8,0
+Carbon steel 260,10.0,74,9.525,3
+Carbon steel 260,20.0,36,19.05,2
+Carbon steel 260,64.0,3,63.5,0
+Carbon steel 400,12.0,74,12.7,3
+Carbon steel 400,25.0,35,25.4,1
+Carbon steel 400,50.0,13,50.8,1
+Stainless steel 60,3.0,46,2.667,2
+Stainless steel 60,4.0,38,3.429,2
+Stainless steel 60,5.0,33,4.763,1
+Stainless steel 60,6.0,27,6.35,1
+Stainless steel 130,10.0,16,9.525,1
+Stainless steel 130,12.0,14,12.7,1
+Stainless steel 130,25.0,8,25.4,0
+Stainless steel 260,12.0,29,12.7,1
+Stainless steel 260,20.0,18,19.05,1
+Stainless steel 260,25.0,13,25.4,1
+Stainless steel 260,50.0,9,50.8,0
+Stainless steel 400,20.0 30,9.525,1
+Stainless steel 400,40.0,12,38.1,1
+Stainless steel 400,80.0,3,76.2,0
+Stainless steel 800,75.0,8,76.2,0
+Stainless steel 800,125.0,3,127.0,0
+Stainless steel 800,160.0,2,158.75,0
+Aluminum 45,1.5,74,0.048,4
+Aluminum 45,4.0,43,0.135,2
+Aluminum 6,1690.0,0,60.0,0
+Aluminum 130,12.0,24,0.5,1
+Aluminum 130,20.0,19,0.75,1
+Aluminum 130,25.0,9,1.0,0
+Aluminum 260,12.0,86,0.5,3
+Aluminum 260,20.0,37,0.75,2
+Aluminum 260,25.0,17,1.0,1
+Aluminum 400,20.0,40,0.75,2
+Aluminum 400,40.0,21,1.5,1
+Aluminum 400,75.0,4,3.0,0
+Aluminum 800,75.0,15,3.0,1
+Aluminum 800,160.0,3,6.25,0

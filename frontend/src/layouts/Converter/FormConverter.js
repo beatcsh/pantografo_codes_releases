@@ -26,9 +26,9 @@ const FormConverter = ({ setView, tabla, setFile, file, form, handleRowSelect, h
                     {tabla.map((row, i) => (
                         <div className="converter-table-row" key={i} onClick={() => handleRowSelect(row)}>
                             <div className="converter-table-cell converter-table-cell-material">{row['Material']}</div>
-                            <div className="converter-table-cell">{row['Corriente (A)']} A</div>
-                            <div className="converter-table-cell">{row['Espesor (mm)']}</div>
-                            <div className="converter-table-cell">{row['Velocidad corte (mm/s)']}</div>
+                            <div className="converter-table-cell">{row['Current (A)']} A</div>
+                            <div className="converter-table-cell">{row['Thickness (mm)']}</div>
+                            <div className="converter-table-cell">{row['Cutting speed (mm/s)']}</div>
                         </div>
                     ))}
                 </div>

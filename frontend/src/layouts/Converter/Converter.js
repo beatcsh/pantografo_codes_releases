@@ -69,9 +69,9 @@ const Converter = (props) => {
     setForm(f => ({
       ...f,
       'Material': row['Material'] || '',
-      'Corriente (A)': row['Corriente (A)'] || '',
-      'Espesor (mm)': row['Espesor (mm)'] || '',
-      'Velocidad corte (mm/s)': row['Velocidad corte (mm/s)'] || ''
+      'Corriente (A)': row['Current (A)'] || '',
+      'Espesor (mm)': row['Thickness (mm)'] || '',
+      'Velocidad corte (mm/s)': row['Cutting speed (mm/s)'] || ''
     }));
   };
 
