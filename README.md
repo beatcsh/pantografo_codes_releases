@@ -29,7 +29,7 @@ The project is divided into three main parts:
 
 - 🐍 **FastAPI** (Python)  
 - 📤 **FTP** (File Transfer Protocol)  
-- 🪛 **Yaskawa Motoman Robotics**  
+- 🪛 **Robots from Yaskawa Motoman Robotics**  
 - 🕸️ **ReactJS**  
 - ⚙️ **.NET 8** (ASP.NET Web API)  
 - 🔌 **TCP/IP** (Robot communication)  
