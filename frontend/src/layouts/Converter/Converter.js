@@ -84,24 +84,28 @@ const Converter = (props) => {
     e.preventDefault();
     setConvertError('');
     setDownloadUrl(null);
+
     if (!file) {
       setConvertError('Selecciona un archivo DXF.');
       return;
     }
+
     setConvertLoading(true);
     const formData = new FormData();
     formData.append('file', file);
+
     const params = {
-      velocidad: form['Velocidad corte (mm/s)'] || 100,
-      velocidadj: form['Velocidad J'] || 30,
-      z_altura: form['Z'] || 7,
-      uf: form['User Frame'] || 1,
-      ut: form['Tool'] || 0,
-      uso: form['Uso'] || 0,
-      kerf: form['Kerf'] || 10,
-      zp: form['Profundidad de Corte'] || 1,
-      pa: form['Pasadas'] || 1
+      velocidad: parseFloat(form['Velocidad corte (mm/s)']) || 100,
+      velocidadj: parseInt(form['Velocidad J']) || 30,
+      z_altura: parseFloat(form['Z']) || 7,
+      uf: parseInt(form['User Frame']) || 1,
+      ut: parseInt(form['Tool']) || 0,
+      uso: parseInt(form['Uso']) || 0,
+      kerf: parseFloat(form['Kerf']) || 10,
+      zp: parseFloat(form['Profundidad de Corte']) || 1,
+      pa: parseInt(form['Pasadas']) || 1
     };
+
     try {
       const res = await axios.post(`${API_URL}/convert/`, formData, {
         params,
@@ -116,10 +120,12 @@ const Converter = (props) => {
         }
       }, 100);
     } catch (err) {
+      console.error(err);
       setConvertError('Conversion error.');
     }
     setConvertLoading(false);
   };
+
 
   const enviarPorFTP = async (jbiFileName) => {
     try {
@@ -171,7 +177,7 @@ const Converter = (props) => {
         />
       )}
       {view === 'files' && (
-        <FilesConverter setView={setView} search={search} setSearch={setSearch} robot_ip={robot_ip}/>
+        <FilesConverter setView={setView} search={search} setSearch={setSearch} robot_ip={robot_ip} />
       )}
     </div>
   );

@@ -36,45 +36,56 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # falta la profundidad de corte - zp    -- numero de pasadas - pa        -- 
 @app.post("/convert/")
 async def convertir(
-        file: UploadFile = File(...),
-        velocidad: int = 15,
-        velocidadj: int = 15,
-        z_altura: float = 7,
-        uf: int = 1,
-        ut: int = 1,
-        pc: int = 1,
-        kerf = 0,
-        uso = 0, # al mandar un 1 en la solicitud es dremel, el 0 corresponde al cortador
-        zp = 1,
-        pa = 1
-    ):
+    file: UploadFile = File(...),
+    velocidad: float = 15.0,      # ← antes: int
+    velocidadj: float = 15.0,     # puedes dejarla int si siempre es entera
+    z_altura: float = 7.0,
+    uf: int = 1,
+    ut: int = 1,
+    pc: int = 1,
+    kerf: float = 0.0,
+    uso: int = 0,
+    zp: float = 1.0,
+    pa: int = 1,
+    of: int = 1
+):
     try:
-        # Guardar archivo subido
+        # Guardar el archivo DXF subido
         dxf_path = os.path.join(UPLOAD_DIR, file.filename)
         with open(dxf_path, "wb") as buffer:
             buffer.write(await file.read())
 
-        gcode_lines = generate_gcode_from_dxf(dxf_path, z_altura, kerf, uso, zp, pa)
+        # Generar el G-code (ahora devuelve solo una lista de strings)
+        gcode_lines = generate_gcode_from_dxf(dxf_path, z_altura, kerf, uso, zp, pa, of)
 
+        # Nombre base sin extensión
         nombre_base = os.path.splitext(file.filename)[0]
-        
+
+        # Convertir a JBI
         jbi_path, gcode_path = gcode_a_yaskawa(
-            gcode_lines = gcode_lines,
-            z_altura = z_altura,
-            velocidad = velocidad,
-            nombre_base = nombre_base,
-            output_dir = UPLOAD_DIR,
-            uf = uf,
-            ut = ut,
-            pc = pc,
-            velocidadj = velocidadj,
-            zp = zp
+            gcode_lines=gcode_lines,
+            z_altura=z_altura,
+            velocidad=velocidad,
+            nombre_base=nombre_base,
+            output_dir=UPLOAD_DIR,
+            uf=uf,
+            ut=ut,
+            pc=pc,
+            velocidadj=velocidadj,
+            zp=zp,
+            circles=[],
+            circles_id=[],
+            kerf=kerf
         )
 
-        return FileResponse(path = jbi_path, media_type = "application/octet-stream", filename = nombre_base)
+        return FileResponse(
+            path=jbi_path,
+            media_type="application/octet-stream",
+            filename=os.path.basename(jbi_path)
+        )
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
-    
+      
 @app.get("/tabla")
 async def get_tabla():
     try:

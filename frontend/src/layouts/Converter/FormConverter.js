@@ -39,7 +39,7 @@ const FormConverter = ({ setView, tabla, setFile, file, form, handleRowSelect, h
             {/* Panel derecho: Formulario de conversión */}
             <div className="converter-form-panel-exact">
                 <div className="converter-form-title">CONVERT .DXF TO INFORM II</div>
-                <div className="converter-form-subtitle">(SELECT A .DXF FILE TO CONVERT TO ROBOT YASKAWA LENGUAJE)</div>
+                <div className="converter-form-subtitle">(SELECT A .DXF FILE TO CONVERT TO ROBOT YASKAWA LANGUAGE)</div>
                 <div className="converter-form-file-row">
                     <label className="converter-form-file-btn">
                         SELECT YOUR FILE
@@ -47,6 +47,8 @@ const FormConverter = ({ setView, tabla, setFile, file, form, handleRowSelect, h
                     </label>
                     <div className="converter-form-file-name">{file ? file.name : ''}</div>
                 </div>
+                
+                {/* Formulario con el botón dentro */}
                 <form onSubmit={handleConvert} className="converter-form-fields-grid">
                     <div className="converter-form-field-group">
                         <label className="converter-form-label">MATERIAL</label>
@@ -54,47 +56,43 @@ const FormConverter = ({ setView, tabla, setFile, file, form, handleRowSelect, h
                     </div>
                     <div className="converter-form-field-group">
                         <label className="converter-form-label">J SPEED</label>
-                        <input className="converter-form-input" name="Velocidad J" value={form['Velocidad J']} onChange={handleFormChange} />
+                        <input type="number" className="converter-form-input" name="Velocidad J" value={form['Velocidad J']} onChange={handleFormChange} />
                     </div>
                     <div className="converter-form-field-group">
                         <label className="converter-form-label">CURRENT</label>
-                        <input className="converter-form-input" name="Corriente (A)" value={form['Corriente (A)']} onChange={handleFormChange} />
+                        <input type="number" className="converter-form-input" name="Corriente (A)" value={form['Corriente (A)']} onChange={handleFormChange} />
                     </div>
                     <div className="converter-form-field-group">
                         <label className="converter-form-label">Z POSITION</label>
-                        <input className="converter-form-input" name="Z" value={form['Z']} onChange={handleFormChange} />
+                        <input type="number" className="converter-form-input" name="Z" value={form['Z']} onChange={handleFormChange} />
                     </div>
                     <div className="converter-form-field-group">
                         <label className="converter-form-label">WIDTH</label>
-                        <input className="converter-form-input" name="Espesor (mm)" value={form['Espesor (mm)']} onChange={handleFormChange} />
+                        <input type="number" className="converter-form-input" name="Espesor (mm)" value={form['Espesor (mm)']} onChange={handleFormChange} />
                     </div>
                     <div className="converter-form-field-group">
                         <label className="converter-form-label">USER FRAME</label>
-                        <input className="converter-form-input" name="User Frame" value={form['User Frame']} onChange={handleFormChange} />
+                        <input type="number" className="converter-form-input" name="User Frame" value={form['User Frame']} onChange={handleFormChange} />
                     </div>
                     <div className="converter-form-field-group">
                         <label className="converter-form-label">SPEED CUT</label>
-                        <input className="converter-form-input" name="Velocidad corte (mm/s)" value={form['Velocidad corte (mm/s)']} onChange={handleFormChange} />
+                        <input type="number" className="converter-form-input" name="Velocidad corte (mm/s)" value={form['Velocidad corte (mm/s)']} onChange={handleFormChange} />
                     </div>
                     <div className="converter-form-field-group">
                         <label className="converter-form-label">TOOL</label>
-                        <input className="converter-form-input" name="Tool" value={form['Tool']} onChange={handleFormChange} />
+                        <input type="number" className="converter-form-input" name="Tool" value={form['Tool']} onChange={handleFormChange} />
                     </div>
-                    {/* <div className="converter-form-field-group">
-                        <label className="converter-form-label">PLASMA</label>
-                        <input className="converter-form-input" name="Plasma" value={form['Plasma']} onChange={handleFormChange} />
-                    </div> */}
                     <div className="converter-form-field-group">
                         <label className="converter-form-label">KERF</label>
-                        <input className="converter-form-input" name="Kerf" value={form['Kerf']} onChange={handleFormChange} />
+                        <input type="number" className="converter-form-input" name="Kerf" value={form['Kerf']} onChange={handleFormChange} />
                     </div>
                     <div className="converter-form-field-group">
                         <label className="converter-form-label">PASSES</label>
-                        <input className="converter-form-input" name="Pasadas" value={form['Pasadas']} onChange={handleFormChange} />
+                        <input type="number" className="converter-form-input" name="Pasadas" value={form['Pasadas']} onChange={handleFormChange} />
                     </div>
                     <div className="converter-form-field-group">
                         <label className="converter-form-label">DEPTH CUT</label>
-                        <input className="converter-form-input" name="Profundidad de Corte" value={form['Profundidad de Corte']} onChange={handleFormChange} />
+                        <input type="number" className="converter-form-input" name="Profundidad de Corte" value={form['Profundidad de Corte']} onChange={handleFormChange} />
                     </div>
                     <div className="converter-form-field-group">
                         <label className="converter-form-label">TYPE TOOL</label>
@@ -108,10 +106,12 @@ const FormConverter = ({ setView, tabla, setFile, file, form, handleRowSelect, h
                             <option value="1">Dremel</option>
                         </select>
                     </div>
+
+                    <button className="converter-form-submit-btn" type="submit" disabled={convertLoading}>
+                        CONVERT & UPLOAD <FaUpload style={{ marginLeft: 10, marginBottom: -3 }} />
+                    </button>
                 </form>
-                <button className="converter-form-submit-btn" type="submit" onClick={handleConvert} disabled={convertLoading}>
-                    CONVERT & UPLOAD <FaUpload style={{ marginLeft: 10, marginBottom: -3 }} />
-                </button>
+
                 {convertError && <div className="converter-form-error">{convertError}</div>}
                 {downloadUrl && (
                     <a href={downloadUrl} download={file ? file.name.replace(/\.[^.]+$/, '.JBI') : 'programa.jbi'} className="converter-form-download-link">Descargar archivo .JBI</a>
