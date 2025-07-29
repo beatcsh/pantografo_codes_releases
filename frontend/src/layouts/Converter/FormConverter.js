@@ -47,7 +47,7 @@ const FormConverter = ({ setView, tabla, setFile, file, form, handleRowSelect, h
                     </label>
                     <div className="converter-form-file-name">{file ? file.name : ''}</div>
                 </div>
-                
+
                 {/* Formulario con el botón dentro */}
                 <form onSubmit={handleConvert} className="converter-form-fields-grid">
                     <div className="converter-form-field-group">
@@ -93,6 +93,22 @@ const FormConverter = ({ setView, tabla, setFile, file, form, handleRowSelect, h
                     <div className="converter-form-field-group">
                         <label className="converter-form-label">DEPTH CUT</label>
                         <input type="number" className="converter-form-input" name="Profundidad de Corte" value={form['Profundidad de Corte']} onChange={handleFormChange} />
+                    </div>
+                    <div className="converter-form-field-group">
+                        <label className="converter-form-label">ARC SPEED</label>
+                        <input type="number" className="converter-form-input" name="Velocidad de Arco" value={form['Velocidad de Arco']} onChange={handleFormChange} />
+                    </div>
+                    <div className="converter-form-field-group">
+                        <label className="converter-form-label">OUTPUT TOOL</label>
+                        <select
+                            name='Uso'
+                            className="converter-form-input"
+                            value={form['Numero de Salida']}
+                            onChange={handleFormChange}
+                        >
+                            <option value="9">Plasma</option>
+                            <option value="1">Dremel</option>
+                        </select>
                     </div>
                     <div className="converter-form-field-group">
                         <label className="converter-form-label">TYPE TOOL</label>

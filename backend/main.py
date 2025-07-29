@@ -47,7 +47,8 @@ async def convertir(
     uso: int = 0,
     zp: float = 1.0,
     pa: int = 1,
-    of: int = 1
+    of: int = 1,
+    aspeed: int = 20
 ):
     try:
         # Guardar el archivo DXF subido
@@ -75,7 +76,8 @@ async def convertir(
             zp=zp,
             circles=[],
             circles_id=[],
-            kerf=kerf
+            kerf=kerf,
+            aspeed=aspeed
         )
 
         return FileResponse(

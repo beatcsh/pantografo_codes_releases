@@ -445,7 +445,7 @@ def generate_gcode_from_dxf(filename, z_value, kerf, uso, zp, pa, of):          
 predet = 25                                                                     #Valores predeterminados de velocidad VJ
 velocidades = predet
 
-def gcode_a_yaskawa(gcode_lines, z_altura, velocidad, nombre_base, output_dir, uf, ut, pc, velocidadj, zp, circles, circles_id, kerf):     #Traducción del codigo G a inform 2
+def gcode_a_yaskawa(gcode_lines, z_altura, velocidad, nombre_base, output_dir, uf, ut, pc, velocidadj, zp, circles, circles_id, kerf, aspeed):     #Traducción del codigo G a inform 2
     nombre, extension = os.path.splitext(nombre_base)                   # Separar nombre y extensión
     nombre_limpio = re.sub(r'[^a-zA-Z0-9]', '', nombre)                 # Limpiar: quitar todo lo que no sea letras o números
     nombre_limpio = nombre_limpio[:9]                                   # Recortar a máximo 6 caracteres
@@ -462,7 +462,7 @@ def gcode_a_yaskawa(gcode_lines, z_altura, velocidad, nombre_base, output_dir, u
             f.write("/JOB\n")                                                           #Indica tipo de archivo
             f.write(f"//NAME {nuevo_nombre.upper()}\n")                               #Nombre del JOB
             f.write("//POS\n")                                                          #Indica posiciones
-            total_pos = sum(1 for line in gcode_lines if line.startswith("G")) + sum(4 for line in gcode_lines if line.startswith("(Circulo)")) + sum(2 for line in gcode_lines if line.startswith("(Arco G2)")) + sum(2 for line in gcode_lines if line.startswith("(Arco G3)"))-2       #Determina el número total de posiciones
+            total_pos = sum(1 for line in gcode_lines if line.startswith("G")) + sum(4 for line in gcode_lines if line.startswith("(Circulo)")) + sum(2 for line in gcode_lines if line.startswith("(Arco G2)")) + sum(2 for line in gcode_lines if line.startswith("(Arco G3)"))       #Determina el número total de posiciones
             f.write(f"///NPOS {total_pos},0,0,0,0,0\n")                                 #Número total de posiciones
             f.write(f"///TOOL {ut}\n")                                                  #Número de herramienta
             f.write(f"///USER {uf}\n")                                                  #Número de usuario
@@ -492,9 +492,9 @@ def gcode_a_yaskawa(gcode_lines, z_altura, velocidad, nombre_base, output_dir, u
                     ax, ay, az = posiciones[-1]
                     centro = (ax + xi), (ay + yj)
                     if ax == x and ay == y and gcode_lines[i - 2].startswith("(Circulo)"):  
-                        cuad_1 = x + xi, y - xi                                           #Si es un circulo
-                        cuad_2 = x + 2*xi, y
-                        cuad_3 = x + xi, y+xi
+                        cuad_1 = (round(x + xi, 2), round(y - xi, 2))
+                        cuad_2 = (round(x + 2*xi, 2), round(y, 2))
+                        cuad_3 = (round(x + xi, 2), round(y + xi, 2))
                         f.write(f"C{idx:05d}={ax},{ay},{z},0,0,0\n")
                         f.write(f"C{idx+1:05d}={cuad_1[0]},{cuad_1[1]},{z},0,0,0\n") 
                         f.write(f"C{idx+2:05d}={cuad_2[0]},{cuad_2[1]},{z},0,0,0\n")
@@ -508,7 +508,9 @@ def gcode_a_yaskawa(gcode_lines, z_altura, velocidad, nombre_base, output_dir, u
                         area_arc = get_area(arco)
                         if area_arc < 0 : sentido = 'G2'  
                         else: sentido = 'G3'
-                        pmx, pmy = punto_medio_arco(inicio, final, centro, sentido)
+                        pmx, pmy = punto_medio_arco(inicio, final, centro, sentido)    # ya se redondean abajo
+                        pmx = round(float(pmx), 3)
+                        pmy = round(float(pmy), 3)
                         posiciones.append((x, y, xi, yj,z))
                         f.write(f"C{idx:05d}={ax},{ay},{z},0,0,0\n")
                         f.write(f"C{idx+1:05d}={pmx},{pmy},{z},0,0,0\n")             
@@ -517,8 +519,8 @@ def gcode_a_yaskawa(gcode_lines, z_altura, velocidad, nombre_base, output_dir, u
             
             f.write("///POSTYPE PULSE\n")
             f.write("///PULSE\n")
-            # f.write(f"C{idx:05d}=0,0,0,0,0,0\n") 
-            # f.write(f"C{idx +1:05d}=0,0,0,0,0,0\n")  
+            f.write(f"C{idx:05d}=0,0,0,0,0,0\n") 
+            f.write(f"C{idx +1:05d}=0,0,0,0,0,0\n")  
 
             f.write("//INST\n")                                                         #Instrucciones
             f.write(f"///DATE {datetime.now().strftime('%Y/%m/%d %H:%M')}\n")           #Fecha
@@ -526,8 +528,8 @@ def gcode_a_yaskawa(gcode_lines, z_altura, velocidad, nombre_base, output_dir, u
             f.write(f"////FRAME USER {uf}\n")                                               #User frame 1
             f.write("///GROUP1 RB1\n")                                                  #Grupo de coordenadas
             f.write("NOP\n")
-            # f.write(f"DOUT OT#({pc}) OFF\n")                                            #Al final del programa, apaga la antorcha
-            # f.write(f"MOVJ C{idx +1:05d} VJ=10.0\n")
+            f.write(f"DOUT OT#({pc}) OFF\n")                                            #Al final del programa, apaga la antorcha
+            f.write(f"MOVJ C{idx +1:05d} VJ=10.0\n")
             #Escribe los movimientos, junto con el prendido y apagado de la antorcha y timers
             if velocidades == predet:                                                   
                 j = 0
@@ -548,16 +550,16 @@ def gcode_a_yaskawa(gcode_lines, z_altura, velocidad, nombre_base, output_dir, u
                         f.write(f"TIMER T=2.00\n")
                     elif line.startswith("G2") or line.startswith("G3"):              #Si lee un G2, escribe un MOVC con V
                         if gcode_lines[i - 2].startswith("(Circulo)"): 
-                            f.write(f"MOVC C{j:05d} V={30}\n")
-                            f.write(f"MOVC C{j+1:05d} V={30}\n")
-                            f.write(f"MOVC C{j+2:05d} V={30} FPT\n")
-                            f.write(f"MOVC C{j+3:05d} V={30}\n")
-                            f.write(f"MOVC C{j+4:05d} V={30} FPT\n")
+                            f.write(f"MOVC C{j:05d} V={aspeed}\n")
+                            f.write(f"MOVC C{j+1:05d} V={aspeed}\n")
+                            f.write(f"MOVC C{j+2:05d} V={aspeed} FPT\n")
+                            f.write(f"MOVC C{j+3:05d} V={aspeed}\n")
+                            f.write(f"MOVC C{j+4:05d} V={aspeed} FPT\n")
                             j += 5
                         elif gcode_lines[i - 1].startswith("(Arco G2)") or gcode_lines[i - 1].startswith("(Arco G3)"):
-                            f.write(f"MOVC C{j:05d} V={velocidad}\n")
-                            f.write(f"MOVC C{j+1:05d} V={velocidad}\n")
-                            f.write(f"MOVC C{j+2:05d} V={velocidad} FPT\n")
+                            f.write(f"MOVC C{j:05d} V={aspeed}\n")
+                            f.write(f"MOVC C{j+1:05d} V={aspeed}\n")
+                            f.write(f"MOVC C{j+2:05d} V={aspeed} FPT\n")
                             j += 3
 
                     else:
@@ -565,8 +567,8 @@ def gcode_a_yaskawa(gcode_lines, z_altura, velocidad, nombre_base, output_dir, u
                     i += 1  # Siempre pasa a la siguiente línea
 
                     
-            # f.write(f"DOUT OT#({pc}) OFF\n")                                            #Al final del programa, apaga la antorcha
-            # f.write(f"MOVJ C{j:05d} VJ=10.0\n")
+            f.write(f"DOUT OT#({pc}) OFF\n")                                            #Al final del programa, apaga la antorcha
+            f.write(f"MOVJ C{j:05d} VJ=10.0\n")
             f.write("END\n")                                                            #Fin del programa
 
         return jbi_path, g_path 

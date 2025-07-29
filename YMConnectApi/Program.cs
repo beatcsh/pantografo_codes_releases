@@ -4,7 +4,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.WebHost.ConfigureKestrel(options =>
 {
-    options.ListenAnyIP(5229); // << NECESARIO EN DOCKER
+    options.ListenAnyIP(5229); // lo ocupa docker
 });
 
 builder.Services.AddSingleton<RobotService>();
