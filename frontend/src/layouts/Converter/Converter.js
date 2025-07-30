@@ -8,8 +8,11 @@ import 'aos/dist/aos.css'
 import './Converter.css'
 import AOS from "aos"
 import axios from 'axios'
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content"
 
 const API_URL = 'http://localhost:8000';
+const MySwal = withReactContent(Swal)
 
 const Converter = (props) => {
   const { onContentReady, robot_ip, onLogout } = props;
@@ -104,7 +107,7 @@ const Converter = (props) => {
       ut: parseInt(form['Tool']) || 0,
       uso: parseInt(form['Uso']) || 0,
       kerf: parseFloat(form['Kerf']) || 10,
-      pc: parseInt(form['Numero de Salida']) || 9, 
+      pc: parseInt(form['Numero de Salida']) || 9,
       zp: parseFloat(form['Profundidad de Corte']) || 1,
       pa: parseInt(form['Pasadas']) || 1,
       aspeed: parseInt(form['Velocidad de Arco']) || 20
@@ -139,13 +142,20 @@ const Converter = (props) => {
           FTP_HOST: robot_ip
         }
       });
-      if (res.status === 200) {
-        alert('File sent.');
-      } else {
-        alert('An error occurred.');
+      if (res) {
+        console.log('y el swal?')
+        MySwal.fire({
+          icon: "success",
+          title: "File sent, please confirm on Teach Pendant, if it is not there check the params.",
+          timer: 10000,
+        })
       }
     } catch {
-      alert('An error ocurred.');
+      MySwal.fire({
+          icon: "success",
+          title: "Something is wrong.",
+          timer: 5000,
+        })
     }
   };
 
