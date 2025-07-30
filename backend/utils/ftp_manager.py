@@ -45,7 +45,15 @@ bye
                 stderr=subprocess.PIPE
             )
             if process.returncode == 0:
-                print("Archivo subido.")
+                listota = self.listar_archivos(FTP_HOST)
+                encontrado = False
+                for archivo in listota:
+                    if archivo == nombre_archivo:
+                        encontrado = True
+                if encontrado:
+                    print("Archivo subido.")
+                else:
+                    print("No")
             else:
                 print("Error en FTP")
                 print(process.stderr.decode())
