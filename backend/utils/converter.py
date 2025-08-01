@@ -140,7 +140,7 @@ def fit_circle(xs, ys):
     r = sqrt(c[2] + cx**2 + cy**2)
     return (cx, cy, r)
 
-def detectar_varios_arcos(puntos, min_puntos=40, max_puntos=43, tolerancia=0.5):
+def detectar_varios_arcos(puntos, min_puntos=40, max_puntos=43, tolerancia=0.2):
 
     arcos_encontrados = []
     n = len(puntos)
