@@ -539,8 +539,11 @@ def gcode_a_yaskawa(gcode_lines, z_altura, velocidad, nombre_base, output_dir, u
                     if line.startswith("G0"):                                           #Si lee un G0, escribe un MOVJ con VJ
                         f.write(f"MOVJ C{j:05d} VJ={velocidadj}\n")
                         j += 1
+                    elif line.startswith("G1") and (gcode_lines[i-1].startswith("M0") or gcode_lines[i+1].startswith("M0")):                                        #Si lee un G1, escribe un MOVL con V
+                        f.write(f"MOVL C{j:05d} V={velocidad} FINE=2\n")
+                        j += 1
                     elif line.startswith("G1"):                                         #Si lee un G1, escribe un MOVL con V
-                        f.write(f"MOVL C{j:05d} V={velocidad} PL=0\n")
+                        f.write(f"MOVL C{j:05d} V={velocidad} PL=1\n")
                         j += 1
                     elif line.startswith("M03"):                                        #Si lee un M03, escribe el encendido de la antorcha y 
                         f.write(f"DOUT OT#({pc}) ON\n")                                 #Agrega un pequeño timer de 1 segundo
@@ -550,17 +553,23 @@ def gcode_a_yaskawa(gcode_lines, z_altura, velocidad, nombre_base, output_dir, u
                         f.write(f"TIMER T=2.00\n")
                     elif line.startswith("G2") or line.startswith("G3"):              #Si lee un G2, escribe un MOVC con V
                         if gcode_lines[i - 2].startswith("(Circulo)"): 
-                            f.write(f"MOVC C{j:05d} V={aspeed}\n")
-                            f.write(f"MOVC C{j+1:05d} V={aspeed}\n")
-                            f.write(f"MOVC C{j+2:05d} V={aspeed} FPT\n")
-                            f.write(f"MOVC C{j+3:05d} V={aspeed}\n")
-                            f.write(f"MOVC C{j+4:05d} V={aspeed} FPT\n")
+                            f.write(f"MOVC C{j:05d} V={velocidad} PL=1\n")
+                            f.write(f"MOVC C{j+1:05d} V={velocidad} PL=1\n")
+                            f.write(f"MOVC C{j+2:05d} V={velocidad} PL=1 FPT\n")
+                            f.write(f"MOVC C{j+3:05d} V={velocidad} PL=1\n")
+                            f.write(f"MOVC C{j+4:05d} V={velocidad} FINE=2 FPT\n")
                             j += 5
-                        elif gcode_lines[i - 1].startswith("(Arco G2)") or gcode_lines[i - 1].startswith("(Arco G3)"):
-                            f.write(f"MOVC C{j:05d} V={aspeed}\n")
-                            f.write(f"MOVC C{j+1:05d} V={aspeed}\n")
-                            f.write(f"MOVC C{j+2:05d} V={aspeed} FPT\n")
-                            j += 3
+                        elif (gcode_lines[i - 1].startswith("(Arco G2)") or gcode_lines[i - 1].startswith("(Arco G3)")):
+                            if gcode_lines[i - 1].startswith("M0"):
+                                f.write(f"MOVC C{j:05d} V={velocidad} FINE=2\n")
+                                f.write(f"MOVC C{j+1:05d} V={velocidad} PL=1\n")
+                                f.write(f"MOVC C{j+2:05d} V={velocidad} PL=1 FPT\n")
+                                j += 3
+                            elif gcode_lines[i + 1].startswith("M0"):
+                                f.write(f"MOVC C{j:05d} V={velocidad} PL=1\n")
+                                f.write(f"MOVC C{j+1:05d} V={velocidad} PL=1\n")
+                                f.write(f"MOVC C{j+2:05d} V={velocidad} FINE=2 FPT\n")
+                                j += 3
 
                     else:
                         pass  # No se incrementa j                                      #Si no lee nada, pasa a la siguiente línea
