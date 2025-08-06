@@ -40,5 +40,5 @@ The project is divided into three main parts:
 
 ## 🚀 How to run with Docker
 
-1. Just run the file named "run.bat"
+1. Just run the file named "install.bat", once you have done it, you can run the app with "run.bat" everytime you require it.
 2. Now you can access to the project on Docker Desktop and start the services there or initialize the project from a Windows Terminal using: **docker-compose up**, in the project root folder.
