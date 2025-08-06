@@ -1,4 +1,2 @@
-@echo off
-echo Iniciando todos los servicios con Docker...
-docker-compose up --build
-pause
+echo Ejecutando todas las imagenes con Docker...
+docker-compose up
