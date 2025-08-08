@@ -31,7 +31,7 @@ const Converter = (props) => {
     'Plasma': 1,
     'Kerf': 10,
     'Uso': 0,
-    'Numero de Salida': 9,
+    // 'Numero de Salida': 9,
     'Profundidad de Corte': 1,
     'Pasadas': 1,
     'Velocidad de Arco': 20
@@ -107,7 +107,7 @@ const Converter = (props) => {
       ut: parseInt(form['Tool']) || 0,
       uso: parseInt(form['Uso']) || 0,
       kerf: parseFloat(form['Kerf']) || 10,
-      pc: parseInt(form['Numero de Salida']) || 9,
+      // pc: parseInt(form['Numero de Salida']) || 9,
       zp: parseFloat(form['Profundidad de Corte']) || 1,
       pa: parseInt(form['Pasadas']) || 1,
       aspeed: parseInt(form['Velocidad de Arco']) || 20

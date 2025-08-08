@@ -98,10 +98,10 @@ const FormConverter = ({ setView, tabla, setFile, file, form, handleRowSelect, h
                         <label className="converter-form-label">ARC SPEED</label>
                         <input type="number" className="converter-form-input" name="Velocidad de Arco" value={form['Velocidad de Arco']} onChange={handleFormChange} />
                     </div>
-                    <div className="converter-form-field-group">
+                    {/* <div className="converter-form-field-group">
                         <label className="converter-form-label">OUTPUT TOOL</label>
                         <select
-                            name='Uso'
+                            name='Numero de Salida'
                             className="converter-form-input"
                             value={form['Numero de Salida']}
                             onChange={handleFormChange}
@@ -109,7 +109,7 @@ const FormConverter = ({ setView, tabla, setFile, file, form, handleRowSelect, h
                             <option value="9">Plasma</option>
                             <option value="1">Dremel</option>
                         </select>
-                    </div>
+                    </div> */}
                     <div className="converter-form-field-group">
                         <label className="converter-form-label">TYPE TOOL</label>
                         <select

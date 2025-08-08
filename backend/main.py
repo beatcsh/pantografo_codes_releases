@@ -77,7 +77,6 @@ async def convertir(
             circles=[],
             circles_id=[],
             kerf=kerf,
-            aspeed=aspeed
         )
 
         return FileResponse(
