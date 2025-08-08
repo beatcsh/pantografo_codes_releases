@@ -1,5 +1,5 @@
 # Etapa de build con Node.js 22.17.0
-FROM node:22.17.0-alpine AS build
+FROM node:22.17.0 AS build
 WORKDIR /app
 COPY . .
 RUN npm install

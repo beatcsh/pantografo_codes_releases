@@ -445,18 +445,19 @@ def generate_gcode_from_dxf(filename, z_value, kerf, uso, zp, pa, of):          
 predet = 25                                                                     #Valores predeterminados de velocidad VJ
 velocidades = predet
 
-def gcode_a_yaskawa(gcode_lines, z_altura, velocidad, nombre_base, output_dir, uf, ut, pc, velocidadj, zp, circles, circles_id, kerf, aspeed):     #Traducción del codigo G a inform 2
+def gcode_a_yaskawa(gcode_lines, z_altura, velocidad, nombre_base, output_dir, uf, ut, pc, velocidadj, zp, circles, circles_id, kerf):     #Traducción del codigo G a inform 2
     nombre, extension = os.path.splitext(nombre_base)                   # Separar nombre y extensión
     nombre_limpio = re.sub(r'[^a-zA-Z0-9]', '', nombre)                 # Limpiar: quitar todo lo que no sea letras o números
-    nombre_limpio = nombre_limpio[:9]                                   # Recortar a máximo 6 caracteres
+    nombre_limpio = nombre_limpio[:9]                                   # Recortar a máximo 9 caracteres
     nuevo_nombre = f"{nombre_limpio}{extension}"                        # Crear nuevo nombre completo                                        
 
+    vel_circ = [] 
     jbi_path = os.path.join(output_dir, f"{nuevo_nombre}.JBI")                #Dirección y tipo de archivo del programa inform 2 (del robot)
     g_path = os.path.join(output_dir, f"{nuevo_nombre}.gcode")                #Dirección y tipo de archivo del código G
     aum = 0
     try:
         with open(g_path, "w") as gf:                                           #Abre el archivo del código G para empezar a traducirlo
-            gf.write("".join(map(str, gcode_lines)))
+            gf.write("\n".join(gcode_lines))
 
         with open(jbi_path, "w") as f:                                                  #Abre el archivo del inform 2 para empezar a escribir
             f.write("/JOB\n")                                                           #Indica tipo de archivo
@@ -492,9 +493,11 @@ def gcode_a_yaskawa(gcode_lines, z_altura, velocidad, nombre_base, output_dir, u
                     ax, ay, az = posiciones[-1]
                     centro = (ax + xi), (ay + yj)
                     if ax == x and ay == y and gcode_lines[i - 2].startswith("(Circulo)"):  
-                        cuad_1 = (round(x + xi, 2), round(y - xi, 2))
-                        cuad_2 = (round(x + 2*xi, 2), round(y, 2))
-                        cuad_3 = (round(x + xi, 2), round(y + xi, 2))
+                        cuad_1 = round(x + xi, 3), round(y - xi, 3)                                          #Si es un circulo
+                        cuad_2 = round(x + 2*xi, 3), round(y, 3)
+                        cuad_3 = round(x + xi, 3), round(y+xi, 3)
+                        area_circ = math.sqrt(abs(xi))* math.pi
+                        vel_circ.append(round(velocidad * area_circ / 25, 0))                                 #Calcula la velocidad del circulo
                         f.write(f"C{idx:05d}={ax},{ay},{z},0,0,0\n")
                         f.write(f"C{idx+1:05d}={cuad_1[0]},{cuad_1[1]},{z},0,0,0\n") 
                         f.write(f"C{idx+2:05d}={cuad_2[0]},{cuad_2[1]},{z},0,0,0\n")
@@ -508,19 +511,19 @@ def gcode_a_yaskawa(gcode_lines, z_altura, velocidad, nombre_base, output_dir, u
                         area_arc = get_area(arco)
                         if area_arc < 0 : sentido = 'G2'  
                         else: sentido = 'G3'
-                        pmx, pmy = punto_medio_arco(inicio, final, centro, sentido)    # ya se redondean abajo
-                        pmx = round(float(pmx), 3)
-                        pmy = round(float(pmy), 3)
+                        pmx, pmy = punto_medio_arco(inicio, final, centro, sentido)
+                        pmx = round(pmx,3)
+                        pmy = round(pmy,3)
                         posiciones.append((x, y, xi, yj,z))
                         f.write(f"C{idx:05d}={ax},{ay},{z},0,0,0\n")
                         f.write(f"C{idx+1:05d}={pmx},{pmy},{z},0,0,0\n")             
                         f.write(f"C{idx+2:05d}={x},{y},{z},0,0,0\n")       
                         idx += 3
-            
-            f.write("///POSTYPE PULSE\n")
-            f.write("///PULSE\n")
-            f.write(f"C{idx:05d}=0,0,0,0,0,0\n") 
-            f.write(f"C{idx +1:05d}=0,0,0,0,0,0\n")  
+            if uso == 0:                                                        #Si es corte láser, agrega un punto de inicio y fin
+                f.write("///POSTYPE PULSE\n")
+                f.write("///PULSE\n")
+                f.write(f"C{idx:05d}=0,0,0,0,0,0\n") 
+                f.write(f"C{idx +1:05d}=0,0,0,0,0,0\n")  
 
             f.write("//INST\n")                                                         #Instrucciones
             f.write(f"///DATE {datetime.now().strftime('%Y/%m/%d %H:%M')}\n")           #Fecha
@@ -528,56 +531,67 @@ def gcode_a_yaskawa(gcode_lines, z_altura, velocidad, nombre_base, output_dir, u
             f.write(f"////FRAME USER {uf}\n")                                               #User frame 1
             f.write("///GROUP1 RB1\n")                                                  #Grupo de coordenadas
             f.write("NOP\n")
-            f.write(f"DOUT OT#({pc}) OFF\n")                                            #Al final del programa, apaga la antorcha
-            f.write(f"MOVJ C{idx +1:05d} VJ=10.0\n")
+            if uso == 0:                                                        #Si es corte láser
+                f.write(f"DOUT OT#({pc}) OFF\n")                                            #Al final del programa, apaga la antorcha
+                f.write(f"MOVJ C{idx +1:05d} VJ=10.0\n")
             #Escribe los movimientos, junto con el prendido y apagado de la antorcha y timers
             if velocidades == predet:                                                   
                 j = 0
                 i = 0
+                c = 0
                 while i < len(gcode_lines):                                                 
                     line = gcode_lines[i]
                     if line.startswith("G0"):                                           #Si lee un G0, escribe un MOVJ con VJ
                         f.write(f"MOVJ C{j:05d} VJ={velocidadj}\n")
                         j += 1
-                    elif line.startswith("G1") and (gcode_lines[i-1].startswith("M0") or gcode_lines[i+1].startswith("M0")):                                        #Si lee un G1, escribe un MOVL con V
-                        f.write(f"MOVL C{j:05d} V={velocidad} FINE=2\n")
+                    elif line.startswith("G1") and (gcode_lines[i-1].startswith("M0") or gcode_lines[i+1].startswith("M0") or gcode_lines[i+1].startswith("G1")) and gcode_lines[i-1].startswith("G1"):                                        #Si lee un G1, escribe un MOVL con V
+                        f.write(f"MOVL C{j:05d} V={velocidad}\n")
+                        f.write(f"TIMER T=0.10\n")
                         j += 1
                     elif line.startswith("G1"):                                         #Si lee un G1, escribe un MOVL con V
-                        f.write(f"MOVL C{j:05d} V={velocidad} PL=1\n")
+                        f.write(f"MOVL C{j:05d} V={velocidad}\n")
                         j += 1
                     elif line.startswith("M03"):                                        #Si lee un M03, escribe el encendido de la antorcha y 
                         f.write(f"DOUT OT#({pc}) ON\n")                                 #Agrega un pequeño timer de 1 segundo
-                        f.write(f"TIMER T=2.00\n")
+                        f.write(f"TIMER T=0.50\n")
                     elif line.startswith("M05"):                                        #Si lee un M05, apaga la antorcha con un timer
                         f.write(f"DOUT OT#({pc}) OFF\n")
-                        f.write(f"TIMER T=2.00\n")
+                        f.write(f"TIMER T=0.50\n")
                     elif line.startswith("G2") or line.startswith("G3"):              #Si lee un G2, escribe un MOVC con V
                         if gcode_lines[i - 2].startswith("(Circulo)"): 
-                            f.write(f"MOVC C{j:05d} V={velocidad} PL=1\n")
-                            f.write(f"MOVC C{j+1:05d} V={velocidad} PL=1\n")
-                            f.write(f"MOVC C{j+2:05d} V={velocidad} PL=1 FPT\n")
-                            f.write(f"MOVC C{j+3:05d} V={velocidad} PL=1\n")
-                            f.write(f"MOVC C{j+4:05d} V={velocidad} FINE=2 FPT\n")
+                            f.write(f"MOVC C{j:05d} V={vel_circ[c]}\n")
+                            f.write(f"MOVC C{j+1:05d} V={vel_circ[c]}\n")
+                            f.write(f"MOVC C{j+2:05d} V={vel_circ[c]} FPT\n")
+                            f.write(f"MOVC C{j+3:05d} V={vel_circ[c]}\n")
+                            f.write(f"MOVC C{j+4:05d} V={vel_circ[c]} FPT\n")
                             j += 5
+                            c += 1
                         elif (gcode_lines[i - 1].startswith("(Arco G2)") or gcode_lines[i - 1].startswith("(Arco G3)")):
                             if gcode_lines[i - 1].startswith("M0"):
-                                f.write(f"MOVC C{j:05d} V={velocidad} FINE=2\n")
-                                f.write(f"MOVC C{j+1:05d} V={velocidad} PL=1\n")
-                                f.write(f"MOVC C{j+2:05d} V={velocidad} PL=1 FPT\n")
+                                f.write(f"MOVC C{j:05d} V={velocidad}\n")
+                                f.write("TIMER T=0.10\n")
+                                f.write(f"MOVC C{j+1:05d} V={velocidad}\n")
+                                f.write(f"MOVC C{j+2:05d} V={velocidad} FPT\n")
                                 j += 3
-                            elif gcode_lines[i + 1].startswith("M0"):
-                                f.write(f"MOVC C{j:05d} V={velocidad} PL=1\n")
-                                f.write(f"MOVC C{j+1:05d} V={velocidad} PL=1\n")
-                                f.write(f"MOVC C{j+2:05d} V={velocidad} FINE=2 FPT\n")
+                            if gcode_lines[i + 1].startswith("M0"):
+                                f.write(f"MOVC C{j:05d} V={velocidad}\n")
+                                f.write(f"MOVC C{j+1:05d} V={velocidad}\n")
+                                f.write(f"MOVC C{j+2:05d} V={velocidad} FPT\n")
+                                f.write("TIMER T=0.10\n")
+                                j += 3
+                            else:
+                                f.write(f"MOVC C{j:05d} V={velocidad}\n")
+                                f.write(f"MOVC C{j+1:05d} V={velocidad}\n")
+                                f.write(f"MOVC C{j+2:05d} V={velocidad} FPT\n")
                                 j += 3
 
                     else:
                         pass  # No se incrementa j                                      #Si no lee nada, pasa a la siguiente línea
                     i += 1  # Siempre pasa a la siguiente línea
 
-                    
-            f.write(f"DOUT OT#({pc}) OFF\n")                                            #Al final del programa, apaga la antorcha
-            f.write(f"MOVJ C{j:05d} VJ=10.0\n")
+            if uso == 0:                                                        #Si es corte láser
+                f.write(f"DOUT OT#({pc}) OFF\n")                                            #Al final del programa, apaga la antorcha
+                f.write(f"MOVJ C{j:05d} VJ=10.0\n")
             f.write("END\n")                                                            #Fin del programa
 
         return jbi_path, g_path 
